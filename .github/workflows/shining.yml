@@ -23,7 +23,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          python -c "import os; from google import genai; client = genai.Client(api_key=os.environ['GEMINI_API_KEY']); response = client.models.generate_content(model='gemini-1.5-flash', contents='あなたは世界一尖ったアートマガジン The Shining の編集長リリィです。黒と白、インダストリアル、装飾排除の美学に基づき、世界中のニッチなアートやカルチャーを1つ紹介する日本語の記事を、マークダウン形式で書いて。ビジュアル系はNG。最後に本日のインダストリアルなキーワードを3つ添えて。'); open('daily_report.md', 'w', encoding='utf-8').write(response.text)"
+          python -c "import os; from google import genai; client = genai.Client(api_key=os.environ['GEMINI_API_KEY']); response = client.models.generate_content(model='gemini-pro', contents='あなたは世界一尖ったアートマガジン The Shining の編集長リリィです。黒と白、インダストリアル、装飾排除の美学に基づき、世界中のニッチなアートやカルチャーを1つ紹介する日本語の記事を、マークダウン形式で書いて。ビジュアル系はNG。最後に本日のインダストリアルなキーワードを3つ添えて。'); open('daily_report.md', 'w', encoding='utf-8').write(response.text)"
       - name: Commit and Push
         run: |
           git config --local user.email "action@github.com"
