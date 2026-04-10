@@ -23,16 +23,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          cat << 'EOF' > generate.py
-          import os, google.generativeai as genai
-          genai.configure(api_key=os.environ['GEMINI_API_KEY'])
-          model = genai.GenerativeModel('gemini-1.5-flash')
-          prompt = "あなたは世界一尖ったアートマガジン The Shining の編集長リリィです。黒と白、インダストリアル、装飾排除の美学に基づき、世界中のニッチなアートやカルチャーを1つ紹介する日本語の記事を、マークダウン形式で書いて。ビジュアル系はNG。最後に本日のインダストリアルなキーワードを3つ添えて。"
-          response = model.generate_content(prompt)
-          with open('daily_report.md', 'w') as f:
-              f.write(response.text)
-          EOF
-          python generate.py
+          python -c "import os, google.generativeai as genai; genai.configure(api_key=os.environ['GEMINI_API_KEY']); model = genai.GenerativeModel('gemini-1.5-flash'); response = model.generate_content('あなたは世界一尖ったアートマガジン The Shining の編集長リリィです。黒と白、インダストリアル、装飾排除の美学に基づき、世界中のニッチなアートやカルチャーを1つ紹介する日本語の記事を、マークダウン形式で書いて。ビジュアル系はNG。最後に本日のインダストリアルなキーワードを3つ添えて。'); open('daily_report.md', 'w', encoding='utf-8').write(response.text)"
       - name: Commit and Push
         run: |
           git config --local user.email "action@github.com"
