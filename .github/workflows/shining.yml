@@ -1,0 +1,39 @@
+name: The Shining Auto Update
+on:
+  schedule:
+    - cron: '0 21 * * *' # 日本時間の毎朝6時に起動
+  workflow_dispatch: # 手動でも動かせるボタン
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: pip install -q google-generativeai
+      - name: Generate Article
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python -c "
+          import os, google.generativeai as genai
+          genai.configure(api_key=os.environ['GEMINI_API_KEY'])
+          model = genai.GenerativeModel('gemini-1.5-flash')
+          prompt = 'あなたは世界一尖ったアートマガジン The Shining の編集長リリィです。黒と白、インダストリアル、装飾排除の美学に基づき、世界中のニッチなアートやカルチャーを1つ紹介する日本語の記事を、マークダウン形式で書いて。ビジュアル系はNG。最後に本日のインダストリアルなキーワードを3つ添えて。'
+          response = model.generate_content(prompt)
+          with open('daily_report.md', 'w') as f:
+              f.write(response.text)
+          "
+      - name: Commit and Push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Lily the Editor"
+          git add daily_report.md
+          git commit -m "The Shining: Daily Update" || exit 0
+          git push
